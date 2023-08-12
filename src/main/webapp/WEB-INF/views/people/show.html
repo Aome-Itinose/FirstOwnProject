@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>Person</title>
+</head>
+<body>
+
+<h1 th:if="${person==null}">There is no such person</h1>
+
+<h1 th:text="${person.getNsf()}"></h1>
+<p th:text="${person.getYear()}"></p>
+<p th:text="${person.getId()}"></p>
+
+<hr/>
+<br/>
+
+<form th:method="GET" th:action="@{/people}">
+    <input type="submit" value="People.">
+</form>
+
+<form th:method="GET" th:action="@{/people/{id}/edit(id=${person.getId()})}">
+    <input type="submit" value="Edit.">
+</form>
+
+<form th:method="DELETE" th:action="@{/people/{id}(id=${person.getId()})}">
+    <input type="submit" value="Delete.">
+</form>
+
+</body>
+</html>

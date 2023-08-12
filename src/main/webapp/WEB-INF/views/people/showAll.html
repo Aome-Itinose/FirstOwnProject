@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <title>People list.</title>
+</head>
+<body>
+
+<h1 th:if="${people.isEmpty()}">No have person</h1>
+
+<div th:each="person:${people}" th:unless="${people.isEmpty()}">
+    <a th:href="@{/people/{id}(id=${person.getId()})}" th:text="${person.getNsf()}"></a>
+</div>
+
+<br/>
+<hr/>
+
+<a th:href="@{/people/new}">Create new person.</a>
+
+</body>
+</html>
