@@ -1,5 +1,6 @@
 package org.Aome.dao;
 
+import org.Aome.model.Book;
 import org.Aome.model.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
@@ -36,5 +37,9 @@ public class PersonDAO {
 
     public void delete(int id){
         jdbcTemplate.update("delete from person where id=?", id);
+    }
+
+    public List<Book> getPersonBooks(int id){
+        return jdbcTemplate.query("select * from book where owner_id=?", new BeanPropertyRowMapper<>(Book.class), id);
     }
 }

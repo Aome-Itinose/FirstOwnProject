@@ -12,6 +12,16 @@
 <p th:text="${person.getYear()}"></p>
 <p th:text="${person.getId()}"></p>
 
+<br/>
+
+<div th:unless="${personBooks.isEmpty()}">
+    <h2>Books:</h2>
+    <div th:each="book:${personBooks}">
+        <a th:href="@{/books/{id}(id=${book.getId()})}" th:text="${book.getAuthor() + ', ' + book.getName()}"></a>
+    </div>
+</div>
+<h2 th:if="${personBooks.isEmpty()}">This person haven't books.</h2>
+
 <hr/>
 <br/>
 
