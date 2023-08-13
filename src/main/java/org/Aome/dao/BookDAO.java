@@ -12,10 +12,12 @@ import java.util.Optional;
 @Component
 public class BookDAO {
     private final JdbcTemplate jdbcTemplate;
+    private final PersonDAO personDAO;
 
     @Autowired
-    public BookDAO(JdbcTemplate jdbcTemplate) {
+    public BookDAO(JdbcTemplate jdbcTemplate, PersonDAO personDAO) {
         this.jdbcTemplate = jdbcTemplate;
+        this.personDAO = personDAO;
     }
 
     public List<Book> getBookList(){
@@ -23,7 +25,11 @@ public class BookDAO {
     }
 
     public Optional<Book> getBook(int id){
-        return jdbcTemplate.query("SELECT * FROM Book where id=?", new BeanPropertyRowMapper<>(Book.class), new Object[]{id}).stream().findAny();
+        Optional<Book> book = jdbcTemplate.query("SELECT * FROM Book where id=?", new BeanPropertyRowMapper<>(Book.class), new Object[]{id}).stream().findAny();
+        if(book.isPresent() && book.get().getOwner_id()!=null){
+            book.get().setOwner(personDAO.getPerson(book.get().getOwner_id()).get());
+        }
+        return book;
     }
 
     public void create(Book book){
