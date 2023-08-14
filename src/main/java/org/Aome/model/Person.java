@@ -5,6 +5,7 @@ import jakarta.validation.constraints.*;
 public class Person{
     private int id;
 
+    //name, surname, father name
     @Size(min = 2, max = 100, message = "Size should be between 2 and 100.")
     private String nsf;
     @Min(value = 1901, message = "Should be more than 1900.")
