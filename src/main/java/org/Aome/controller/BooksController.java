@@ -29,6 +29,7 @@ public class BooksController {
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model model){
         model.addAttribute("book", bookDAO.getBook(id).orElse(null));
+        model.addAttribute("people", bookDAO.getPeopleList());
         return "books/show";
     }
 
@@ -65,5 +66,18 @@ public class BooksController {
     public String delete(@PathVariable("id")int id){
         bookDAO.delete(id);
         return "redirect:/books";
+    }
+
+
+    @PatchMapping("/{id}/edit/clearOwner")
+    public String clearOwner(@PathVariable("id")int id){
+        bookDAO.clearOwner(id);
+        return "redirect:/books/{id}";
+    }
+
+    @PatchMapping("/{id}/edit/setOwner")
+    public String setOwner(@PathVariable("id")int id, @ModelAttribute("book")Book book){
+        bookDAO.setOwner(id, book);
+        return "redirect:/books/{id}";
     }
 }
