@@ -1,9 +1,18 @@
 package org.Aome.model;
 
+import jakarta.validation.constraints.Max;
+import jakarta.validation.constraints.Size;
+
 public class Book {
     private int id;
+
+    @Size(min = 1, max = 100, message = "Size of name should be between 1 and 100.")
     private String name;
+
+    @Size(min = 2, max = 100, message = "Size of author name should be between 2 and 100.")
     private String author;
+
+    @Max(value = 2023, message = "Year should be less than 2024.")
     private int year;
     private Integer owner_id;
     private Person owner;

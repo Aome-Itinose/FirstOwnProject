@@ -1,10 +1,12 @@
 package org.Aome.controller;
 
+import jakarta.validation.Valid;
 import org.Aome.dao.BookDAO;
 import org.Aome.model.Book;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 @Controller
@@ -41,7 +43,10 @@ public class BooksController {
     }
 
     @PostMapping()
-    public String newBookSet(@ModelAttribute("book") Book book){
+    public String newBookSet(@ModelAttribute("book")@Valid Book book, BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return "books/newBookView";
+        }
         bookDAO.create(book);
         return "redirect:/books";
     }
@@ -55,7 +60,11 @@ public class BooksController {
     }
 
     @PatchMapping("/{id}")
-    public String editBook(@PathVariable("id") int id, @ModelAttribute("book")Book book){
+    public String editBook(@PathVariable("id") int id, @ModelAttribute("book")@Valid Book book,
+                           BindingResult bindingResult){
+        if(bindingResult.hasErrors()){
+            return "books/editBookView";
+        }
         bookDAO.edit(id, book);
         return "redirect:/books/{id}";
     }

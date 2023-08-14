@@ -1,8 +1,14 @@
 package org.Aome.model;
 
+import jakarta.validation.constraints.*;
+
 public class Person{
     private int id;
+
+    @Size(min = 2, max = 100, message = "Size should be between 2 and 100.")
     private String nsf;
+    @Min(value = 1901, message = "Should be more than 1900.")
+    @Max(value = 2023, message = "Should be less than 2024.")
     private int year;
 
     public Person(int id, String nsf, int year) {
