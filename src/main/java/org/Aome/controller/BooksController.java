@@ -1,9 +1,9 @@
 package org.Aome.controller;
 
 import jakarta.validation.Valid;
-import org.Aome.dao.BookDAO;
-import org.Aome.model.Book;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.Aome.models.Book;
+import org.Aome.services.BooksService;
+import org.Aome.services.PeopleService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -13,25 +13,26 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/books")
 public class BooksController {
 
-    private final BookDAO bookDAO;
+    private final BooksService booksService;
+    private final PeopleService peopleService;
 
-    @Autowired
-    public BooksController(BookDAO bookDAO) {
-        this.bookDAO = bookDAO;
+    public BooksController(BooksService booksService, PeopleService peopleService) {
+        this.booksService = booksService;
+        this.peopleService = peopleService;
     }
 
 
     //Show
     @GetMapping()
     public String showAll(Model model){
-        model.addAttribute("books", bookDAO.getBookList());
+        model.addAttribute("books", booksService.getBooks());
         return "books/showAll";
     }
 
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model model){
-        model.addAttribute("book", bookDAO.getBook(id).orElse(null));
-        model.addAttribute("people", bookDAO.getPeopleList());
+        model.addAttribute("book", booksService.getBook(id).orElse(null));
+        model.addAttribute("people", peopleService.getPeople());
         return "books/show";
     }
 
@@ -47,7 +48,7 @@ public class BooksController {
         if(bindingResult.hasErrors()){
             return "books/newBookView";
         }
-        bookDAO.create(book);
+        booksService.save(book);
         return "redirect:/books";
     }
 
@@ -55,7 +56,7 @@ public class BooksController {
     //Update
     @GetMapping("/{id}/edit")
     public String editBookView(Model model, @PathVariable("id") int id){
-        model.addAttribute("book", bookDAO.getBook(id).orElse(null));
+        model.addAttribute("book", booksService.getBook(id).orElse(null));
         return "books/editBookView";
     }
 
@@ -65,7 +66,7 @@ public class BooksController {
         if(bindingResult.hasErrors()){
             return "books/editBookView";
         }
-        bookDAO.edit(id, book);
+        booksService.update(id, book);
         return "redirect:/books/{id}";
     }
 
@@ -73,20 +74,20 @@ public class BooksController {
     //Delete
     @DeleteMapping("/{id}")
     public String delete(@PathVariable("id")int id){
-        bookDAO.delete(id);
+        booksService.delete(id);
         return "redirect:/books";
     }
 
 
     @PatchMapping("/{id}/edit/clearOwner")
     public String clearOwner(@PathVariable("id")int id){
-        bookDAO.clearOwner(id);
+        booksService.clearOwner(id);
         return "redirect:/books/{id}";
     }
 
     @PatchMapping("/{id}/edit/setOwner")
     public String setOwner(@PathVariable("id")int id, @ModelAttribute("book")Book book){
-        bookDAO.setOwner(id, book);
+        booksService.setOwner(id, book);
         return "redirect:/books/{id}";
     }
 }

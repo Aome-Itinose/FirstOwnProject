@@ -9,7 +9,7 @@
 <h1 th:if="${people.isEmpty()}">No have person</h1>
 
 <div th:each="person:${people}" th:unless="${people.isEmpty()}">
-    <a th:href="@{/people/{id}(id=${person.getId()})}" th:text="${person.getNsf()}"></a>
+    <a th:href="@{/people/{id}(id=${person.getId()})}" th:text="${person.getFullName()}"></a>
 </div>
 
 <br/>

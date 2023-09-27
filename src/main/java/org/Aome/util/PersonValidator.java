@@ -1,8 +1,7 @@
 package org.Aome.util;
 
-import org.Aome.dao.PersonDAO;
-import org.Aome.model.Person;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.Aome.models.Person;
+import org.Aome.services.PeopleService;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
@@ -10,12 +9,12 @@ import org.springframework.validation.Validator;
 @Component
 public class PersonValidator implements Validator {
 
-    private final PersonDAO personDAO;
+    private final PeopleService peopleService;
 
-    @Autowired
-    public PersonValidator(PersonDAO personDAO) {
-        this.personDAO = personDAO;
+    public PersonValidator(PeopleService peopleService) {
+        this.peopleService = peopleService;
     }
+
 
     @Override
     public boolean supports(Class<?> clazz) {
@@ -25,7 +24,7 @@ public class PersonValidator implements Validator {
     @Override
     public void validate(Object target, Errors errors) {
         Person person = (Person) target;
-        if(personDAO.getPerson(person.getNsf()).isPresent()){
+        if(peopleService.getPersonByName(person.getFullName()).isPresent()){
             errors.rejectValue("nsf" , "", "This person is already registered.");
         }
     }
