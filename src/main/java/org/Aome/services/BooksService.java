@@ -1,6 +1,8 @@
 package org.Aome.services;
 
+import org.Aome.models.Author;
 import org.Aome.models.Book;
+import org.Aome.models.Person;
 import org.Aome.repositories.BooksRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,10 +15,14 @@ import java.util.Optional;
 @Transactional(readOnly = true)
 public class BooksService {
     private final BooksRepository booksRepository;
+    private final PeopleService peopleService;
+    private final AuthorsService authorsService;
 
     @Autowired
-    public BooksService(BooksRepository booksRepository) {
+    public BooksService(BooksRepository booksRepository, PeopleService peopleService, AuthorsService authorsService) {
         this.booksRepository = booksRepository;
+        this.peopleService = peopleService;
+        this.authorsService = authorsService;
     }
 
     public List<Book> getBooks(){
@@ -51,8 +57,19 @@ public class BooksService {
     @Transactional
     public void setOwner(int id, Book updatedBook){
         Optional<Book> book = booksRepository.findById(id);
-        book.ifPresent(value -> value.setOwner(updatedBook.getOwner()));
+        book.ifPresent(value -> value.setOwner(peopleService.getPersonById(updatedBook.getOwnerId()).get()));
     }
 
+    public List<Person> getPeople(){
+        return peopleService.getPeople();
+    }
+
+    public List<Author> getAuthors(){
+        return authorsService.getAuthors();
+    }
+
+    public Optional<Author> getAuthorById(int id){
+        return authorsService.getAuthorById(id);
+    }
 
 }

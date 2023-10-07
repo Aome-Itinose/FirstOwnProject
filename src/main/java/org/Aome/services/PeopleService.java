@@ -1,5 +1,6 @@
 package org.Aome.services;
 
+import org.Aome.models.Book;
 import org.Aome.models.Person;
 import org.Aome.repositories.PeopleRepository;
 import org.springframework.beans.factory.annotation.Autowired;

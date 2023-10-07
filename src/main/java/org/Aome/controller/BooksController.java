@@ -3,7 +3,6 @@ package org.Aome.controller;
 import jakarta.validation.Valid;
 import org.Aome.models.Book;
 import org.Aome.services.BooksService;
-import org.Aome.services.PeopleService;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
@@ -14,11 +13,9 @@ import org.springframework.web.bind.annotation.*;
 public class BooksController {
 
     private final BooksService booksService;
-    private final PeopleService peopleService;
 
-    public BooksController(BooksService booksService, PeopleService peopleService) {
+    public BooksController(BooksService booksService) {
         this.booksService = booksService;
-        this.peopleService = peopleService;
     }
 
 
@@ -32,14 +29,15 @@ public class BooksController {
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model model){
         model.addAttribute("book", booksService.getBook(id).orElse(null));
-        model.addAttribute("people", peopleService.getPeople());
+        model.addAttribute("people", booksService.getPeople());
         return "books/show";
     }
 
 
     //Create
     @GetMapping("/new")
-    public String newBookView(@ModelAttribute("book") Book book){
+    public String newBookView(@ModelAttribute("book") Book book, Model model){
+        model.addAttribute("authors", booksService.getAuthors());
         return "books/newBookView";
     }
 
@@ -48,6 +46,7 @@ public class BooksController {
         if(bindingResult.hasErrors()){
             return "books/newBookView";
         }
+        book.setAuthor(booksService.getAuthorById(book.getAuthorId()).get());
         booksService.save(book);
         return "redirect:/books";
     }

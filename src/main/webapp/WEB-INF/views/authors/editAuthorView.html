@@ -6,16 +6,14 @@
 </head>
 <body>
 
-<form th:method="PATCH" th:action="@{/people/{id}(id=${person.getId()})}" th:object="${person}">
+<form th:method="PATCH" th:action="@{/authors/{id}(id=${author.getId()})}" th:object="${author}">
     <label for="fullName">Name, surname, patronymic:</label>
     <input type="text" th:field="*{fullName}" id="fullName"/>
-    <div style="color:red" th:if="${#fields.hasErrors('nsf')}" th:errors="*{fullName}"></div>
 
     <br/>
 
     <label for="year">Year of birth:</label>
     <input type="number" th:field="*{yearOfBirth}" id="year"/>
-    <div style="color:red" th:if="${#fields.hasErrors('year')}" th:errors="*{yearOfBirth}"></div>
 
     <br/>
 

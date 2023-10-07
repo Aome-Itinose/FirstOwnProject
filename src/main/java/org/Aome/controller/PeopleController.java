@@ -5,6 +5,7 @@ import org.Aome.models.Person;
 import org.Aome.services.PeopleService;
 import org.Aome.util.PersonValidator;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
@@ -31,10 +32,12 @@ public class PeopleController {
         return "people/showAll";
     }
 
+    @Transactional(readOnly = true)
     @GetMapping("/{id}")
     public String show(@PathVariable("id") int id, Model model){
         Optional<Person> person = peopleService.getPersonById(id);
         model.addAttribute("person", person.orElse(null));
+        person.ifPresent(value -> System.out.println(value.getBooks()));
         person.ifPresent(value -> model.addAttribute("personBooks", value.getBooks()));
         return "people/show";
     }

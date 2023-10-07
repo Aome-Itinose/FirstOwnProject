@@ -6,7 +6,7 @@
 </head>
 <body>
 
-<h1 th:if="${books.isEmpty()}">No have person</h1>
+<h1 th:if="${books.isEmpty()}">No have book</h1>
 
 <div th:each="book:${books}" th:unless="${books.isEmpty()}">
     <a th:href="@{/books/{id}(id=${book.getId()})}" th:text="${book.getAuthor() + ', ' + book.getName()}"></a>

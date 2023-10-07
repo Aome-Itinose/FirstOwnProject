@@ -15,12 +15,12 @@ public class Person {
 
     //name, surname, father name
     @Size(min = 2, max = 100, message = "Size should be between 2 and 100.")
-    @Column(name = "nsf")
+    @Column(name = "full_name")
     private String fullName;
 
     @Min(value = 1901, message = "Should be more than 1900.")
     @Max(value = 2023, message = "Should be less than 2024.")
-    @Column(name = "year")
+    @Column(name = "year_of_birth")
     private int yearOfBirth;
 
     @OneToMany(mappedBy = "owner")

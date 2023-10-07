@@ -13,15 +13,20 @@
 
     <br/>
 
-    <label for="author">Author:</label>
-    <input type="text" th:field="*{author}" id="author"/>
-    <div style="color:red" th:if="${#fields.hasErrors('author')}" th:errors="*{author}"></div>
-
-    <br/>
-
     <label for="year">Year of written:</label>
     <input type="number" th:field="*{year}" id="year"/>
     <div style="color:red" th:if="${#fields.hasErrors('year')}" th:errors="*{year}"></div>
+
+    <br/>
+
+    <label for="author">Author:</label>
+    <select th:object="${book}"
+            th:field="*{authorId}"
+            id="author">
+        <option th:each="auth: ${authors}"
+                th:value="${auth.id}"
+                th:text="${auth.getFullName()}">Name</option>
+    </select>
 
     <br/>
 

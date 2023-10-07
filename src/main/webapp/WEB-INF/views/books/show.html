@@ -9,7 +9,8 @@
 <h1 th:if="${book==null}">There is no such book.</h1>
 
 <h1 th:text="${book.getName()}"></h1>
-<h3 th:text="${'Author: ' + book.getAuthor()}"></h3>
+<h3 th:text="${'Author: '}"></h3>
+<a th:href="@{/authors/{id}(id=${book.getAuthor().getId()})}" th:text="${book.getAuthor()}"></a>
 <p th:text="${'Year: ' + book.getYear()}"></p>
 <p th:text="${'ID: ' + book.getId()}"></p>
 
@@ -19,7 +20,7 @@
     <h2>This book is free.</h2>
     <form th:method="PATCH" th:action="@{/books/{id}/edit/setOwner(id=${book.getId()})}" th:object="${book}">
         <label for="owner">Select owner: </label>
-        <select th:object="${book}" th:field="*{owner_id}" id="owner">
+        <select th:object="${book}" th:field="*{ownerId}" id="owner">
             <option th:each="person:${people}" th:value="${person.getId()}" th:text="${person.getFullName()}"/>
         </select>
         <input type="submit" value="Set.">

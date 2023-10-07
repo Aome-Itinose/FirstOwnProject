@@ -16,6 +16,7 @@
 
 <div th:unless="${personBooks.isEmpty()}">
     <h2>Books:</h2>
+
     <div th:each="book:${personBooks}">
         <a th:href="@{/books/{id}(id=${book.getId()})}" th:text="${book.getAuthor() + ', ' + book.getName()}"></a>
     </div>

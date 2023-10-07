@@ -15,28 +15,33 @@ public class Book {
     @Column(name = "name")
     private String name;
 
-    @Size(min = 2, max = 100, message = "Size of author name should be between 2 and 100.")
-    @Column(name = "author")
-    private String author;
 
     @Max(value = 2023, message = "Year should be less than 2024.")
-    @Column(name = "year")
+    @Column(name = "year_of_written")
     private int year;
 
     @ManyToOne
     @JoinColumn(name = "owner_id", referencedColumnName = "id")
     private Person owner;
 
+    @ManyToOne
+    @JoinColumn(name="author_id", referencedColumnName = "id")
+    private Author author;
 
+    @Transient
+    private int authorId;
+    @Transient
+    private int ownerId;
 
-    public Book(int id, String name, String author, int year) {
-        this.id = id;
-        this.name = name;
-        this.author = author;
-        this.year = year;
-    }
 
     public Book() {
+    }
+
+    public Book(String name, int year, Person owner, Author author) {
+        this.name = name;
+        this.year = year;
+        this.owner = owner;
+        this.author = author;
     }
 
     public int getId() {
@@ -55,14 +60,6 @@ public class Book {
         this.name = name;
     }
 
-    public String getAuthor() {
-        return author;
-    }
-
-    public void setAuthor(String author) {
-        this.author = author;
-    }
-
     public int getYear() {
         return year;
     }
@@ -77,5 +74,29 @@ public class Book {
 
     public void setOwner(Person owner) {
         this.owner = owner;
+    }
+
+    public Author getAuthor() {
+        return author;
+    }
+
+    public void setAuthor(Author author) {
+        this.author = author;
+    }
+
+    public int getAuthorId() {
+        return authorId;
+    }
+
+    public void setAuthorId(int authorId) {
+        this.authorId = authorId;
+    }
+
+    public int getOwnerId() {
+        return ownerId;
+    }
+
+    public void setOwnerId(int ownerId) {
+        this.ownerId = ownerId;
     }
 }
