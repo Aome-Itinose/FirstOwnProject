@@ -8,6 +8,9 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.Optional;
+
 @Controller
 @RequestMapping("/books")
 public class BooksController {
@@ -21,13 +24,16 @@ public class BooksController {
 
     //Show
     @GetMapping()
-    public String showAll(Model model){
-        model.addAttribute("books", booksService.getBooks());
+    public String showAll(Model model,
+                          @RequestParam(required = false) Optional<Integer> page,
+                          @RequestParam(required = false) Optional<Integer> books_per_page,
+                          @RequestParam(defaultValue = "false") boolean sort_by_year) {
+        model.addAttribute("books", booksService.getBooks(page, books_per_page, sort_by_year));
         return "books/showAll";
     }
 
     @GetMapping("/{id}")
-    public String show(@PathVariable("id") int id, Model model){
+    public String show(@PathVariable("id") int id, Model model) {
         model.addAttribute("book", booksService.getBook(id).orElse(null));
         model.addAttribute("people", booksService.getPeople());
         return "books/show";
@@ -36,14 +42,15 @@ public class BooksController {
 
     //Create
     @GetMapping("/new")
-    public String newBookView(@ModelAttribute("book") Book book, Model model){
+    public String newBookView(@ModelAttribute("book") Book book, Model model) {
         model.addAttribute("authors", booksService.getAuthors());
         return "books/newBookView";
     }
 
     @PostMapping()
-    public String newBookSet(@ModelAttribute("book")@Valid Book book, BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
+    public String newBookSet(@ModelAttribute("book") @Valid Book book, BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("authors", booksService.getAuthors());
             return "books/newBookView";
         }
         book.setAuthor(booksService.getAuthorById(book.getAuthorId()).get());
@@ -54,17 +61,20 @@ public class BooksController {
 
     //Update
     @GetMapping("/{id}/edit")
-    public String editBookView(Model model, @PathVariable("id") int id){
+    public String editBookView(Model model, @PathVariable("id") int id) {
         model.addAttribute("book", booksService.getBook(id).orElse(null));
+        model.addAttribute("authors", booksService.getAuthors());
         return "books/editBookView";
     }
 
     @PatchMapping("/{id}")
-    public String editBook(@PathVariable("id") int id, @ModelAttribute("book")@Valid Book book,
-                           BindingResult bindingResult){
-        if(bindingResult.hasErrors()){
+    public String editBook(@PathVariable("id") int id, @ModelAttribute("book") @Valid Book book,
+                           BindingResult bindingResult, Model model) {
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("authors", booksService.getAuthors());
             return "books/editBookView";
         }
+        book.setAuthor(booksService.getAuthorById(book.getAuthorId()).get());
         booksService.update(id, book);
         return "redirect:/books/{id}";
     }
@@ -72,21 +82,32 @@ public class BooksController {
 
     //Delete
     @DeleteMapping("/{id}")
-    public String delete(@PathVariable("id")int id){
+    public String delete(@PathVariable("id") int id) {
         booksService.delete(id);
         return "redirect:/books";
     }
 
 
     @PatchMapping("/{id}/edit/clearOwner")
-    public String clearOwner(@PathVariable("id")int id){
+    public String clearOwner(@PathVariable("id") int id) {
         booksService.clearOwner(id);
         return "redirect:/books/{id}";
     }
 
     @PatchMapping("/{id}/edit/setOwner")
-    public String setOwner(@PathVariable("id")int id, @ModelAttribute("book")Book book){
+    public String setOwner(@PathVariable("id") int id, @ModelAttribute("book") Book book) {
         booksService.setOwner(id, book);
         return "redirect:/books/{id}";
+    }
+
+    @GetMapping("/search")
+    public String search(@RequestParam(value = "startText", required = false) String startText, Model model) {
+        if (startText != null) {
+            model.addAttribute("books", booksService.findByNameStartWith(startText));
+        } else {
+            List<Book> books = booksService.getBooksWithInitializeOwnerAndAuthor();
+            model.addAttribute("books", books);
+        }
+        return "books/search";
     }
 }

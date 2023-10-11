@@ -3,6 +3,7 @@ package org.Aome.controller;
 import jakarta.validation.Valid;
 import org.Aome.models.Author;
 import org.Aome.services.AuthorsService;
+import org.hibernate.Hibernate;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -30,8 +31,9 @@ public class AuthorsController {
     public String show(@PathVariable("id") int id, Model model){
         Optional<Author> author = authorsService.getAuthorById(id);
         model.addAttribute("author", author.orElse(null));
-        author.ifPresent(value -> System.out.println(value.getWrittenBooks()));
-        author.ifPresent(value -> model.addAttribute("writtenBooks", value.getWrittenBooks()));
+        author.ifPresent(value -> {
+            Hibernate.initialize(value.getWrittenBooks());
+            model.addAttribute("writtenBooks", value.getWrittenBooks());});
         return "authors/show";
     }
 

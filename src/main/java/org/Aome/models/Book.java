@@ -3,6 +3,8 @@ package org.Aome.models;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.*;
 
+import java.util.Date;
+
 @Entity
 @Table(name = "Book")
 public class Book {
@@ -27,6 +29,13 @@ public class Book {
     @ManyToOne
     @JoinColumn(name="author_id", referencedColumnName = "id")
     private Author author;
+
+    @Column(name = "date_and_time")
+    @Temporal(TemporalType.DATE)
+    private Date dateAndTime;
+
+    @Transient
+    private boolean isOverdue;
 
     @Transient
     private int authorId;
@@ -98,5 +107,24 @@ public class Book {
 
     public void setOwnerId(int ownerId) {
         this.ownerId = ownerId;
+    }
+
+
+    public boolean isOverdue() {
+        return isOverdue;
+    }
+
+    public void setOverdue(boolean overdue) {
+        isOverdue = overdue;
+    }
+
+    public Date getDateAndTime() {
+        if (dateAndTime==null)
+            return new Date();
+        return dateAndTime;
+    }
+
+    public void setDateAndTime(Date dateAndTime) {
+        this.dateAndTime = dateAndTime;
     }
 }

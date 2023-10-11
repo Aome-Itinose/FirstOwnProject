@@ -14,8 +14,13 @@
     <br/>
 
     <label for="author">Author:</label>
-    <input type="text" th:field="*{author}" id="author"/>
-    <div style="color:red" th:if="${#fields.hasErrors('author')}" th:errors="*{author}"></div>
+    <select th:object="${book}"
+            th:field="*{authorId}"
+            id="author">
+        <option th:each="author: ${authors}"
+                th:value="${author.id}"
+                th:text="${author.getFullName()}">Name</option>
+    </select>
 
     <br/>
 

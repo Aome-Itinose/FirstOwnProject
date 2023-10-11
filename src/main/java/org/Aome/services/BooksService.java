@@ -4,10 +4,14 @@ import org.Aome.models.Author;
 import org.Aome.models.Book;
 import org.Aome.models.Person;
 import org.Aome.repositories.BooksRepository;
+import org.hibernate.Hibernate;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +31,35 @@ public class BooksService {
 
     public List<Book> getBooks(){
         return booksRepository.findAll();
+    }
+
+    public List<Book> getBooksWithInitializeOwnerAndAuthor(){
+        List<Book> books = booksRepository.findAll();
+        books.forEach(book -> {
+            Hibernate.initialize(book.getOwner());
+            Hibernate.initialize(book.getAuthor());
+        });
+        return books;
+    }
+
+    public List<Book> getBooks(Optional<Integer> page, Optional<Integer> booksPerPage, boolean sortByYear){
+        List<Book> books;
+        if (page.isPresent() & booksPerPage.isPresent()){
+            if (sortByYear){
+                books = booksRepository.findAll(
+                        PageRequest.of(page.get(), booksPerPage.get(), Sort.by("year"))).getContent();
+            }else{
+                books = booksRepository.findAll(
+                        PageRequest.of(page.get(), booksPerPage.get())).getContent();
+            }
+        }else{
+            if (sortByYear){
+                books = booksRepository.findAll(Sort.by("year"));
+            }else{
+                books = booksRepository.findAll();
+            }
+        }
+        return books;
     }
 
     public Optional<Book> getBook(int id){
@@ -51,13 +84,19 @@ public class BooksService {
 
     @Transactional
     public void clearOwner(int id){
-        booksRepository.findById(id).orElse(new Book()).setOwner(null);
+        booksRepository.findById(id).ifPresent(book -> {
+            book.setOwner(null);
+            book.setDateAndTime(null);
+        });
     }
 
     @Transactional
     public void setOwner(int id, Book updatedBook){
-        Optional<Book> book = booksRepository.findById(id);
-        book.ifPresent(value -> value.setOwner(peopleService.getPersonById(updatedBook.getOwnerId()).get()));
+        booksRepository.findById(id).ifPresent(book -> {
+            book.setOwnerId(updatedBook.getOwnerId());
+            book.setOwner(peopleService.getPersonById(updatedBook.getOwnerId()).orElse(null));
+            book.setDateAndTime(new Date());
+        });
     }
 
     public List<Person> getPeople(){
@@ -70,6 +109,14 @@ public class BooksService {
 
     public Optional<Author> getAuthorById(int id){
         return authorsService.getAuthorById(id);
+    }
+
+
+    public List<Book> findByNameStartWith(String startString){
+        List<Book> books = booksRepository.findByNameStartsWith(startString);
+        books.forEach(e -> Hibernate.initialize(e.getOwner()));
+        books.forEach(book -> Hibernate.initialize(book.getAuthor()));
+        return books;
     }
 
 }
